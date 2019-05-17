@@ -1,17 +1,14 @@
 package main
 
 import (
+	"github.com/labstack/echo/middleware"
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello echo World!")
-	})
 	// basic auth settings
 	e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 		if username == "foo" && password == "foo" {
@@ -19,5 +16,9 @@ func main() {
 		}
 		return false, nil
 	}))
+
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello echo World!")
+	})
 	e.Logger.Fatal(e.Start(":8080"))
 }

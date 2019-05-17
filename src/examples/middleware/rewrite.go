@@ -9,11 +9,17 @@ import (
 
 func main() {
 	e := echo.New()
-	// can be used to serve static files from the provided root directory.
-	// e.g. request /js/main.js -> static/js/main.js
-	e.Use(middleware.Static("/static"))
+	// rewrites the URL path based on provided rules
+	e.Pre(middleware.Rewrite(map[string]string{
+		"/old":   "/new",
+		"/api/*": "/$1",
+		"/js":    "/public/javascript/$1",
+	}))
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello echo World!")
+	})
+	e.GET("/new", func(c echo.Context) error {
+		return c.String(http.StatusOK, "new")
 	})
 	e.Logger.Fatal(e.Start(":8080"))
 }
